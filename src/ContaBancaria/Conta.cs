@@ -27,6 +27,7 @@ public class Conta
     {
         if (string.IsNullOrWhiteSpace(titular))
             throw new ArgumentException("O titular não pode ser nulo ou vazio.", nameof(titular));
+
         if (saldoInicial < 0)
             throw new ArgumentException("O saldo inicial não pode ser negativo.", nameof(saldoInicial));
 
@@ -44,8 +45,13 @@ public class Conta
     /// </summary>
     public void Depositar(decimal valor)
     {
-        // TODO: Implemente usando TDD
-        throw new NotImplementedException();
+        if (!Ativa)
+            throw new InvalidOperationException("Conta inativa.");
+
+        if (valor <= 0)
+            throw new ArgumentException("O valor deve ser maior que zero.", nameof(valor));
+
+        Saldo += valor;
     }
 
     /// <summary>
@@ -58,8 +64,16 @@ public class Conta
     /// </summary>
     public void Sacar(decimal valor)
     {
-        // TODO: Implemente usando TDD
-        throw new NotImplementedException();
+        if (!Ativa)
+            throw new InvalidOperationException("Conta inativa.");
+
+        if (valor <= 0)
+            throw new ArgumentException("O valor deve ser maior que zero.", nameof(valor));
+
+        if (valor > Saldo)
+            throw new InvalidOperationException("Saldo insuficiente.");
+
+        Saldo -= valor;
     }
 
     /// <summary>
@@ -72,8 +86,23 @@ public class Conta
     /// </summary>
     public void Transferir(Conta destino, decimal valor)
     {
-        // TODO: Implemente usando TDD
-        throw new NotImplementedException();
+        if (destino == null)
+            throw new ArgumentException("Conta destino inválida.", nameof(destino));
+
+        if (!Ativa)
+            throw new InvalidOperationException("Conta origem inativa.");
+
+        if (!destino.Ativa)
+            throw new InvalidOperationException("Conta destino inativa.");
+
+        if (valor <= 0)
+            throw new ArgumentException("O valor deve ser maior que zero.", nameof(valor));
+
+        if (valor > Saldo)
+            throw new InvalidOperationException("Saldo insuficiente.");
+
+        Saldo -= valor;
+        destino.Saldo += valor;
     }
 
     /// <summary>
@@ -85,7 +114,12 @@ public class Conta
     /// </summary>
     public void Encerrar()
     {
-        // TODO: Implemente usando TDD
-        throw new NotImplementedException();
+        if (!Ativa)
+            throw new InvalidOperationException("Conta já está inativa.");
+
+        if (Saldo != 0)
+            throw new InvalidOperationException("Conta com saldo não pode ser encerrada.");
+
+        Ativa = false;
     }
 }
